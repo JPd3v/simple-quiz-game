@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { nanoid } from 'nanoid';
-import QuizzButton from './subComponents/buttons';
 
-export default function Quiz() {
+import Quiz from './subComponents/Quiz';
+
+export default function QuizApp() {
   const [gameIsFinished, setGameIsFinished] = useState(false);
   const [questions, setQuestions] = useState([]);
   const [userAnswers, setUserAnswer] = useState(['', '', '', '', '']);
@@ -13,8 +14,8 @@ export default function Quiz() {
   function questionsMap(data) {
     return data.map((question, index) => (
       <div key={nanoid()}>
-        {question.question}
-        <QuizzButton
+        <Quiz
+          question={question.question}
           key={nanoid()}
           answers={[...question.incorrect_answers, question.correct_answer]}
           handleClick={(event) =>
@@ -29,6 +30,7 @@ export default function Quiz() {
       </div>
     ));
   }
+
   useEffect(
     () =>
       async function fetchData() {
