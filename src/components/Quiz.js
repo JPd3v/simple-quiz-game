@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 
 export default function Quiz({
   question,
@@ -12,7 +12,12 @@ export default function Quiz({
     handleClick(question, isCorrect);
   }
 
-  const answerElements = answers.map((element) => {
+  const shufledArray = useMemo(
+    () => [...answers].sort(() => (Math.random() > 0.5 ? 1 : -1)),
+    [question]
+  );
+
+  const answerElements = shufledArray.map((element) => {
     const isAnswerSelected = element === lastClickedButton;
     return (
       <button

@@ -55,7 +55,7 @@ export default function QuizApp() {
 
   function playAgain() {
     setGameIsFinished(false);
-    setUserAnswer(['', '', '', '', '']);
+    setUserAnswer({});
 
     setReplay((prevState) => !prevState);
   }
@@ -75,10 +75,12 @@ export default function QuizApp() {
           <div>{score}</div>
         </div>
       ) : (
-        <button type="button" onClick={gameResult}>
-          {' '}
-          see result
-        </button>
+        Object.keys(userAnswers).length === 5 && (
+          <button type="button" onClick={gameResult}>
+            {' '}
+            see result
+          </button>
+        )
       )}
     </div>
   );
