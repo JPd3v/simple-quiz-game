@@ -1,3 +1,7 @@
 button:focus {
   background: rgb(126, 177, 245);
 }
+
+.seleted-answer {
+  background: red;
+}

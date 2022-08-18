@@ -1,31 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { nanoid } from 'nanoid';
 
-import Quiz from './subComponents/Quiz';
+import Quiz from '../Quiz';
 
 export default function QuizApp() {
   const [gameIsFinished, setGameIsFinished] = useState(false);
   const [questions, setQuestions] = useState([]);
-  const [userAnswers, setUserAnswer] = useState(['', '', '', '', '']);
-  const [answersCounter, setAnswersCounter] = useState(0);
-  const [allAnswersAreChosen, setallAnswersAreChosen] = useState(false);
+
+  const [userAnswers, setUserAnswer] = useState({});
+  const [score, setScore] = useState(0);
   const [replay, setReplay] = useState(false);
 
-  function questionsMap(data) {
-    return data.map((question, index) => (
-      <div key={nanoid()}>
+  function handleQuestionAnswered(question, isCorrect) {
+    console.log(question);
+    setUserAnswer((prevAnswers) => ({ ...prevAnswers, [question]: isCorrect }));
+  }
+
+  function questionsMap(data, callBack) {
+    return data.map((question) => (
+      <div key={question.question}>
         <Quiz
           question={question.question}
-          key={nanoid()}
           answers={[...question.incorrect_answers, question.correct_answer]}
-          handleClick={(event) =>
-            setUserAnswer((prevAnswers) => {
-              prevAnswers.splice(index, 1, event.target.textContent);
-              console.log(userAnswers);
-              setallAnswersAreChosen(!userAnswers.includes(''));
-              return prevAnswers;
-            })
-          }
+          correctAnswer={question.correct_answer}
+          userAnswers={userAnswers}
+          handleClick={callBack}
         />
       </div>
     ));
@@ -42,26 +40,27 @@ export default function QuizApp() {
     [replay]
   );
 
-  function GameResult() {
-    let counter = 0;
-    for (let i = 0; i < questions.length; i += 1) {
-      if (questions[i].correct_answer === userAnswers[i]) {
-        counter += 1;
+  function gameResult() {
+    let correctAnswers = 0;
+    for (const key in userAnswers) {
+      if (userAnswers[key] === true) {
+        correctAnswers += 1;
       }
     }
-    setGameIsFinished((prevState) => !prevState);
-    setAnswersCounter(counter);
+
+    console.log(correctAnswers);
+    setScore(correctAnswers);
+    setGameIsFinished(true);
   }
 
   function playAgain() {
     setGameIsFinished(false);
     setUserAnswer(['', '', '', '', '']);
-    setAnswersCounter(0);
-    setallAnswersAreChosen(false);
+
     setReplay((prevState) => !prevState);
   }
 
-  const questionsElements = questionsMap(questions);
+  const questionsElements = questionsMap(questions, handleQuestionAnswered);
 
   return (
     <div>
@@ -73,15 +72,13 @@ export default function QuizApp() {
             {' '}
             play again
           </button>
-          <div>{answersCounter}</div>
+          <div>{score}</div>
         </div>
       ) : (
-        allAnswersAreChosen && (
-          <button type="button" onClick={GameResult}>
-            {' '}
-            see result
-          </button>
-        )
+        <button type="button" onClick={gameResult}>
+          {' '}
+          see result
+        </button>
       )}
     </div>
   );
