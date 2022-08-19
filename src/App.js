@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 import Header from './components/Header';
-import Quiz from './components/quizGame/QuizGame';
+import Quiz from './components/QuizGame';
 
 function App() {
   return (

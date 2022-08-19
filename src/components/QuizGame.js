@@ -1,29 +1,27 @@
 import React, { useState, useEffect } from 'react';
-
-import Quiz from '../Quiz';
+import Quiz from './Quiz';
 
 export default function QuizApp() {
   const [gameIsFinished, setGameIsFinished] = useState(false);
   const [questions, setQuestions] = useState([]);
-
   const [userAnswers, setUserAnswer] = useState({});
   const [score, setScore] = useState(0);
   const [replay, setReplay] = useState(false);
 
   function handleQuestionAnswered(question, isCorrect) {
-    console.log(question);
     setUserAnswer((prevAnswers) => ({ ...prevAnswers, [question]: isCorrect }));
   }
 
   function questionsMap(data, callBack) {
     return data.map((question) => (
-      <div key={question.question}>
+      <div key={question.question} className="question">
         <Quiz
           question={question.question}
           answers={[...question.incorrect_answers, question.correct_answer]}
           correctAnswer={question.correct_answer}
           userAnswers={userAnswers}
           handleClick={callBack}
+          gameIsFinished={gameIsFinished}
         />
       </div>
     ));
@@ -32,10 +30,14 @@ export default function QuizApp() {
   useEffect(
     () =>
       async function fetchData() {
-        const response = await fetch('https://opentdb.com/api.php?amount=5');
-        const data = await response.json();
+        try {
+          const response = await fetch('https://opentdb.com/api.php?amount=5');
+          const data = await response.json();
 
-        setQuestions(data.results);
+          setQuestions(data.results);
+        } catch (error) {
+          console.log(error);
+        }
       },
     [replay]
   );
@@ -48,7 +50,6 @@ export default function QuizApp() {
       }
     }
 
-    console.log(correctAnswers);
     setScore(correctAnswers);
     setGameIsFinished(true);
   }
@@ -63,23 +64,29 @@ export default function QuizApp() {
   const questionsElements = questionsMap(questions, handleQuestionAnswered);
 
   return (
-    <div>
+    <div className="questions-container ">
       {questionsElements}
 
       {gameIsFinished ? (
-        <div>
-          <button type="button" onClick={playAgain}>
+        <div className="game-results">
+          <div>{`You scored ${score}/5 correct answers`}</div>
+          <button type="button" onClick={playAgain} className="btn-play-again">
             {' '}
             play again
           </button>
-          <div>{score}</div>
         </div>
       ) : (
-        Object.keys(userAnswers).length === 5 && (
-          <button type="button" onClick={gameResult}>
-            {' '}
-            see result
-          </button>
+        Object.keys(userAnswers).length >= 5 && (
+          <div className="game-results">
+            <button
+              type="button"
+              onClick={gameResult}
+              className="btn-check-answers"
+            >
+              {' '}
+              Check answers
+            </button>
+          </div>
         )
       )}
     </div>

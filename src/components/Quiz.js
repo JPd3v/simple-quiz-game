@@ -24,7 +24,7 @@ export default function Quiz({
         type="button"
         onClick={() => eventHandler(element, element === correctAnswer)}
         key={element}
-        style={{ backgroundColor: isAnswerSelected ? 'red' : '' }}
+        style={{ backgroundColor: isAnswerSelected ? '#8497ff' : '' }}
       >
         {element}
       </button>
@@ -32,10 +32,10 @@ export default function Quiz({
   });
 
   return (
-    <div>
+    <>
       <div>{question}</div>
 
-      <div>{answerElements}</div>
-    </div>
+      <div className="answer-buttons-container">{answerElements}</div>
+    </>
   );
 }
